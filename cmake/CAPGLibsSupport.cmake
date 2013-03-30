@@ -1,0 +1,33 @@
+# Boost support
+macro(compileWithBoost)
+    set(Boost_USE_STATIC_LIBS OFF)
+    set(Boost_USE_MULTITHREADED ON)
+    find_package(Boost COMPONENTS date_time filesystem graph iostreams regex serialization signals system thread unit_test_framework wave)
+    include_directories(${Boost_INCLUDE_DIRS})
+    link_directories(${Boost_LIBRARY_DIRS})
+endmacro(compileWithBoost)
+
+macro(linkWithBoost projectName)
+    target_link_libraries(${projectName} ${Boost_LIBRARIES})
+endmacro(linkWithBoost)
+
+# OpenGL
+macro(compileWithOpenGL)
+    find_package(OpenGL)
+    find_package(GLUT)
+    if(OPENGL_FOUND)
+        include_directories(${OPENGL_INCLUDE_DIR})
+    endif(OPENGL_FOUND)
+    if(GLUT_FOUND)
+        include_directories(${GLUT_INCLUDE_DIR})
+    endif(GLUT_FOUND)
+endmacro(compileWithOpenGL)
+
+macro(linkWithOpenGL projectName)
+    if(OPENGL_FOUND)
+        target_link_libraries(${projectName} ${OPENGL_LIBRARIES})
+    endif(OPENGL_FOUND)
+    if(GLUT_FOUND)
+        target_link_libraries(${projectName} ${GLUT_LIBRARIES})
+    endif(GLUT_FOUND)
+endmacro(linkWithOpenGL)

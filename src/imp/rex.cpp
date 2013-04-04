@@ -34,9 +34,25 @@
 #include "config/config.h"
 #include "CameraCalibrator.h"
 
-#include "ConfigurationManager/JConfig.h"
+#include "PolySelection.h"
+#include <QApplication>
 
+#include "ConfigurationManager/JConfig.h"
 int rex_main(int argc, char * argv[])
+{
+	QApplication app(argc,argv);
+	QGraphicsScene* scene = new PolySelectionWidget(0,0);
+	scene->addRect(QRectF(0, 0, 100, 100));
+	QGraphicsView* w = new QGraphicsView();
+	w->setScene(scene);
+	w->setBackgroundBrush(QColor(230, 200, 167));
+	w->setRenderHint(QPainter::Antialiasing);
+	w->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+	w->show();
+	return app.exec();
+}
+
+int test_calibration(int argc, char * argv[])
 {
 	cv::namedWindow("Image");
 	cv::Mat image;
@@ -67,22 +83,20 @@ int rex_main(int argc, char * argv[])
 	 QStringList img_filters;
      img_filters << "*.bmp" << "*.jpg" << "*.png";
 
-	QStringList intrinsic_fs = dir.entryList(img_filters,QDir::Files,QDir::SortFlag::Time);
+	 QStringList intrinsic_fs = dir.entryList(img_filters,QDir::Files,QDir::SortFlag::Name);
 
 	QString f;
 	foreach(f,intrinsic_fs)
 		std::cout<<f.toStdString()<<std::endl;
 	
-	return 0;
 	// generate list of chessboard image filename
-	for (int i=1; i<=0; i++) {
+	for (int i=0; i<intrinsic_fs.size(); ++i)
+	{
+		std::string str = dir.absoluteFilePath(intrinsic_fs[i]).toStdString();
+		std::cout << str << std::endl;
 
-		std::stringstream str;
-		str << "../chessboards/chessboard" << std::setw(2) << std::setfill('0') << i << ".jpg";
-		std::cout << str.str() << std::endl;
-
-		filelist.push_back(str.str());
-		image= cv::imread(str.str(),0);
+		filelist.push_back(str);
+		image= cv::imread(str,0);
 		cv::imshow("Image",image);
 	
 		 cv::waitKey(100);

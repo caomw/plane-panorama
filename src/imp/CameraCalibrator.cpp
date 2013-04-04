@@ -32,7 +32,6 @@ int CameraCalibrator::addChessboardPoints(
 	// The corners are at 3D location (X,Y,Z)= (i,j,0)
 	for (int i=0; i<boardSize.height; i++) {
 		for (int j=0; j<boardSize.width; j++) {
-
 			objectCorners.push_back(cv::Point3f(i, j, 0.0f));
 		}
     }
@@ -49,6 +48,10 @@ int CameraCalibrator::addChessboardPoints(
         // Get the chessboard corners
         bool found = cv::findChessboardCorners(
                         image, boardSize, imageCorners);
+		if (found) 
+			std::cout<<"found on"<<filelist[i]<<'\n';
+		else
+			continue;
 
         // Get subpixel accuracy on the corners
         cv::cornerSubPix(image, imageCorners, 
